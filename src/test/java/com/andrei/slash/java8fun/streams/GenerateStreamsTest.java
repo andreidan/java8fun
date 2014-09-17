@@ -7,6 +7,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -24,9 +25,9 @@ public class GenerateStreamsTest {
 
         List<int[]> triplesList = triples.limit(2).collect(toList());
 
-        assertTrue(triplesList.get(0)[0] == 3);
-        assertTrue(triplesList.get(0)[1] == 4);
-        assertTrue(triplesList.get(0)[2] == 5);
+        assertEquals(3, triplesList.get(0)[0]);
+        assertEquals(4, triplesList.get(0)[1]);
+        assertEquals(5, triplesList.get(0)[2]);
 
         List<double[]> tuplesAsDouble = IntStream.rangeClosed(1, 100).boxed()
                 .flatMap(a -> IntStream.rangeClosed(a, 100)
@@ -36,9 +37,9 @@ public class GenerateStreamsTest {
                 .limit(2)
                 .collect(toList());
 
-        assertTrue(tuplesAsDouble.get(0)[0] == 3);
-        assertTrue(tuplesAsDouble.get(0)[1] == 4);
-        assertTrue(tuplesAsDouble.get(0)[2] == 5);
+        assertEquals(3, tuplesAsDouble.get(0)[0], 0.001);
+        assertEquals(4, tuplesAsDouble.get(0)[1], 0.001);
+        assertEquals(5, tuplesAsDouble.get(0)[2], 0.001);
     }
 
 }

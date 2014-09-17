@@ -11,6 +11,7 @@ import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author andrei
@@ -41,9 +42,9 @@ public class TransactionsStreamTest {
                 .sorted(comparing((transaction) -> transaction.getValue()))
                 .collect(toList());
 
-        assertTrue(sortedTransactions.size() == 2);
-        assertTrue(sortedTransactions.get(0).getValue() == 100);
-        assertTrue(sortedTransactions.get(1).getValue() == 900);
+        assertEquals(2, sortedTransactions.size());
+        assertEquals(100, sortedTransactions.get(0).getValue());
+        assertEquals(900, sortedTransactions.get(1).getValue());
     }
 
     @Test
@@ -53,12 +54,12 @@ public class TransactionsStreamTest {
                 .distinct()
                 .collect(toList());
 
-        assertTrue(cities.size() == 3);
+        assertEquals(3, cities.size());
 
         Set<String> citiesSet = transactions.stream()
                 .map((transaction) -> transaction.getTrader().getCity())
                 .collect(toSet());
-        assertTrue(citiesSet.size() == 3);
+        assertEquals(3, citiesSet.size());
     }
 
     @Test
@@ -69,7 +70,7 @@ public class TransactionsStreamTest {
                 .sorted(comparing((trader) -> trader.getName()))
                 .collect(toList());
 
-        assertTrue(tradersFromLondon.size() == 2);
+        assertEquals(2, tradersFromLondon.size());
         assertEquals("Andrei", tradersFromLondon.get(0).getName());
         assertEquals("Jimmy", tradersFromLondon.get(1).getName());
     }
@@ -112,9 +113,9 @@ public class TransactionsStreamTest {
                 .map((transaction) -> transaction.getValue())
                 .collect(toList());
 
-        assertTrue(transactionsInLondon.size() == 2);
-        assertTrue(transactionsInLondon.get(0) == 3000);
-        assertTrue(transactionsInLondon.get(1) == 800);
+        assertEquals(2, transactionsInLondon.size());
+        assertEquals(Integer.valueOf(3000), transactionsInLondon.get(0));
+        assertEquals(Integer.valueOf(800), transactionsInLondon.get(1));
 
         transactions.stream()
                 .filter((transaction) -> transaction.getTrader().getCity().equals("London"))
@@ -129,24 +130,24 @@ public class TransactionsStreamTest {
                 .map((transaction) -> transaction.getValue())
                 .reduce((v1, v2) -> v1 > v2 ? v1 : v2);
 
-        assertTrue(maxTransactionValue.get() == 3000);
+        assertEquals(Integer.valueOf(3000), maxTransactionValue.get());
 
         maxTransactionValue = transactions.stream()
                 .map((transaction) -> transaction.getValue())
                 .reduce(Integer::max);
 
-        assertTrue(maxTransactionValue.get() == 3000);
+        assertEquals(Integer.valueOf(3000), maxTransactionValue.get());
     }
 
     @Test
     public void min_transaction_value() {
         Optional<Transaction> minTransaction = transactions.stream()
                 .min(comparing(Transaction::getValue));
-        assertTrue(minTransaction.get().getValue() == 100);
+        assertEquals(Integer.valueOf(100), (Integer) minTransaction.get().getValue());
 
         minTransaction = transactions.stream()
                 .reduce((t1, t2) -> t1.getValue() < t2.getValue() ? t1 : t2);
-        assertTrue(minTransaction.get().getValue() == 100);
+        assertEquals(Integer.valueOf(100), (Integer) minTransaction.get().getValue());
     }
 
     @Test
@@ -155,7 +156,7 @@ public class TransactionsStreamTest {
                 .mapToInt(Transaction::getValue)
                 .max();
 
-        assertTrue(maxTransactionValue.getAsInt() == 3000);
+        assertEquals(Integer.valueOf(3000), (Integer) maxTransactionValue.getAsInt());
     }
 
 }
