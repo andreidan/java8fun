@@ -10,7 +10,6 @@ import java.util.stream.Stream;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 /**
  * @author andrei
@@ -27,9 +26,9 @@ public class GenerateStreamsTest {
 
         List<int[]> triplesList = triples.limit(2).collect(toList());
 
-        assertEquals(3, triplesList.get(0)[0]);
-        assertEquals(4, triplesList.get(0)[1]);
-        assertEquals(5, triplesList.get(0)[2]);
+        assertThat(triplesList.get(0)[0], is(3));
+        assertThat(triplesList.get(0)[1], is(4));
+        assertThat(triplesList.get(0)[2], is(5));
 
         List<double[]> tuplesAsDouble = IntStream.rangeClosed(1, 100).boxed()
                 .flatMap(a -> IntStream.rangeClosed(a, 100)
@@ -39,9 +38,9 @@ public class GenerateStreamsTest {
                 .limit(2)
                 .collect(toList());
 
-        assertEquals(3, tuplesAsDouble.get(0)[0], 0.001);
-        assertEquals(4, tuplesAsDouble.get(0)[1], 0.001);
-        assertEquals(5, tuplesAsDouble.get(0)[2], 0.001);
+        assertThat(tuplesAsDouble.get(0)[0], is(3.0));
+        assertThat(tuplesAsDouble.get(0)[1], is(4.0));
+        assertThat(tuplesAsDouble.get(0)[2], is(5.0));
     }
 
     private int[] firstTenFib = new int[]{0, 1, 1, 2, 3, 5, 8, 13, 21, 34};
