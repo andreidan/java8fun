@@ -3,11 +3,13 @@ package com.andrei.slash.java8fun.streams;
 import org.junit.Test;
 
 import java.util.List;
+import java.util.function.IntSupplier;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -42,4 +44,47 @@ public class GenerateStreamsTest {
         assertEquals(5, tuplesAsDouble.get(0)[2], 0.001);
     }
 
+    private int[] firstTenFib = new int[]{0, 1, 1, 2, 3, 5, 8, 13, 21, 34};
+
+    @Test
+    public void generate_fib() {
+        List<int[]> fibPairs = Stream.iterate(new int[]{0, 1}, t -> new int[]{t[1], t[0] + t[1]})
+                .limit(10)
+//                .forEach(t -> System.out.println(t[0] + " - " + t[1] + " / "));
+                .collect(toList());
+
+        IntStream.range(0, 9).forEach(i -> {
+            assertThat(fibPairs.get(i)[0], is(firstTenFib[i]));
+            assertThat(fibPairs.get(i)[1], is(firstTenFib[i + 1]));
+        });
+
+        List<Integer> fibList = Stream.iterate(new int[]{0, 1}, t -> new int[]{t[1], t[0] + t[1]})
+                .limit(10)
+                .map(t -> t[0])
+//                .forEach(t -> System.out.println(t));
+                .collect(toList());
+
+        IntStream.range(0, 10).forEach(i -> assertThat("Expecting element " + i + " in the fib sequence to be " + firstTenFib[i], fibList.get(i), is(firstTenFib[i])));
+
+        IntSupplier fibSupplier = new IntSupplier() {
+            private int firstSeed = 0;
+            private int secondSeed = 1;
+
+            @Override
+            public int getAsInt() {
+                int current = firstSeed;
+                int next = firstSeed + secondSeed;
+                this.firstSeed = this.secondSeed;
+                this.secondSeed = next;
+                return current;
+            }
+        };
+
+        List<Integer> generatedFib = IntStream.generate(fibSupplier).limit(10)
+//                .forEach(System.out::println);
+                .mapToObj(t -> new Integer(t))
+                .collect(toList());
+
+        IntStream.range(0, 10).forEach(i -> assertThat("Expecting element " + i + " in the fib sequence to be " + firstTenFib[i], generatedFib.get(i), is(firstTenFib[i])));
+    }
 }
